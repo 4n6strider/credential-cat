@@ -15,6 +15,8 @@ namespace CredentialCat.Shared.Entities
         [Required] public bool IsSecretHashed { get; set; }
         public string Secret { get; set; }
         public string Domain { get; set; }
+        public string Origin { get; set; }
+        public DateTime WhenHappened { get; set; }
         [Required] public DateTime IndexedAt { get; set; }
     }
 }

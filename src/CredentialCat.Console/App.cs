@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
 using System.CommandLine.Invocation;
-using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
 using static System.Console;
@@ -93,6 +92,12 @@ namespace CredentialCat.Console
                         Name = "forceUpdate"
                     },
 
+                    new Option<bool>(new [] {"-c", "--case-sensitive"})
+                    {
+                        Description = "If the engine will respect case sensitive to match query pattern",
+                        Name = "caseSensitive"
+                    },
+
                     // Data input options
 
                     // Password and hashes
@@ -138,6 +143,18 @@ namespace CredentialCat.Console
                         {
                             Arity = ArgumentArity.ZeroOrMore, Name = "wordlist path",
                             Description = "Wordlist with user(s) and/or address(es)"
+                        }
+                    },
+
+                    // Leak origin
+                    new Option<string>(new [] {"-o", "--origin"})
+                    {
+                        Description = "Query to origin",
+                        Name = "origin",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "origin name",
+                            Description = "Origin name to search"
                         }
                     }
                 };
