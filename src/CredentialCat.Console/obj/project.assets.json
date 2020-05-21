@@ -37,6 +37,16 @@
         "build": {
           "build/Microsoft.NetFramework.Analyzers.props": {}
         }
+      },
+      "CredentialCat.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "compile": {
+          "bin/placeholder/CredentialCat.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CredentialCat.Shared.dll": {}
+        }
       }
     }
   },
@@ -433,10 +443,16 @@
         "tools/install.ps1",
         "tools/uninstall.ps1"
       ]
+    },
+    "CredentialCat.Shared/1.0.0": {
+      "type": "project",
+      "path": "../CredentialCat.Shared/CredentialCat.Shared.csproj",
+      "msbuildProject": "../CredentialCat.Shared/CredentialCat.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "CredentialCat.Shared >= 1.0.0",
       "Microsoft.CodeAnalysis.FxCopAnalyzers >= 2.9.6"
     ]
   },
@@ -465,7 +481,11 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Shared\\CredentialCat.Shared.csproj": {
+              "projectPath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Shared\\CredentialCat.Shared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -494,22 +514,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.2, 3.1.2]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[3.1.2, 3.1.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100-preview.3.20216.6\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   }
