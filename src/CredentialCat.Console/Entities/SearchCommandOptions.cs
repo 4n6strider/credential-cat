@@ -57,10 +57,11 @@ namespace CredentialCat.Console.Entities
             get => _export;
             set
             {
-                if (!value.EndsWith(".json", StringComparison.InvariantCulture) ||
-                    !value.EndsWith(".json", StringComparison.InvariantCulture))
+                if (value != null && (!value.EndsWith(".json", StringComparison.InvariantCulture) ||
+                                      !value.EndsWith(".json", StringComparison.InvariantCulture)))
                 {
-                    WriteLine($"[!] Invalid export file format ({Path.GetExtension(value)})! Only CSV and JSON are supported!");
+                    WriteLine(
+                        $"[!] Invalid export file format ({Path.GetExtension(value)})! Only CSV and JSON are supported!");
                     Environment.Exit(1);
                 }
 

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.CommandLine.Invocation;
 using Microsoft.EntityFrameworkCore;
-using CredentialCat.Console.Entities;
 
 using static System.Console;
 
 using CredentialCat.Shared;
 using CredentialCat.Shared.Enums;
 using CredentialCat.Shared.Entities;
+using CredentialCat.Console.Entities;
 using CredentialCat.Shared.Interfaces;
 
 namespace CredentialCat.Console
@@ -230,9 +230,13 @@ namespace CredentialCat.Console
 
                 searchCommand.Handler = CommandHandler.Create<SearchCommandOptions>(options =>
                 {
-                    if (string.IsNullOrEmpty(options.Origin) || string.IsNullOrEmpty(options.PasswordList) ||
-                        string.IsNullOrEmpty(options.Password) || string.IsNullOrEmpty(options.User) ||
-                        string.IsNullOrEmpty(options.UserList))
+                    if (options.GetType()
+                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(p => p.PropertyType == typeof(string))
+                        .Where(p => p.Name.Contains("Password", StringComparison.InvariantCulture) ||
+                                    p.Name.Contains("User", StringComparison.InvariantCulture) ||
+                                    p.Name.Contains("Origin", StringComparison.InvariantCulture))
+                        .All(p => string.IsNullOrEmpty(p.GetValue(options) as string)))
                     {
                         WriteLine("[!] No search instructions have been parameterized!");
                         WriteLine("[+] See `search --help` for more information");
