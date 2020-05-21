@@ -7,8 +7,8 @@ using System.CommandLine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.CommandLine.Invocation;
-using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
+using CredentialCat.Console.Entities;
 
 using static System.Console;
 
@@ -108,37 +108,37 @@ namespace CredentialCat.Console
                     new Option<bool>(new [] {"-i", "--ignore-cache"})
                     {
                         Description = "If given query ignore cached values",
-                        Name = "ignore"
+                        Name = "IgnoreCache"
                     },
 
                     new Option<bool>(new [] {"-iU", "--ignore-update"})
                     {
                         Description = "Ignore update on cache database when query results exceed the timestamp",
-                        Name = "ignoreUpdate"
+                        Name = "IgnoreUpdate"
                     },
 
                     new Option<bool>(new [] {"-f", "--force-update"})
                     {
                         Description = "Force update on cache database with every query result",
-                        Name = "forceUpdate"
+                        Name = "ForceUpdate"
                     },
 
                     new Option<bool>(new [] {"-c", "--case-sensitive"})
                     {
                         Description = "If the engine will respect case sensitive to match query pattern",
-                        Name = "caseSensitive"
+                        Name = "CaseSensitive"
                     },
 
                     new Option<bool>(new [] {"-b", "--bypass-proxy"})
                     {
                         Description = "If the engine will bypass the proxy",
-                        Name = "bypassProxy"
+                        Name = "BypassProxy"
                     },
 
                     new Option<int>(new [] {"-t", "--timeout"})
                     {
                         Description = "Specify max timeout for HttpServer",
-                        Name = "timeout",
+                        Name = "Timeout",
                         Argument = new Argument<int>
                         {
                             Arity = ArgumentArity.ZeroOrOne, Name = "milliseconds",
@@ -149,7 +149,7 @@ namespace CredentialCat.Console
                     new Option<int>(new [] {"-l", "--limit"})
                     {
                         Description = "Specify max entities to get",
-                        Name = "limit",
+                        Name = "Limit",
                         Argument = new Argument<int>
                         {
                             Arity = ArgumentArity.ZeroOrMore, Name = "limit",
@@ -160,7 +160,7 @@ namespace CredentialCat.Console
                     new Option<string>(new[] {"--export"})
                     {
                         Description = "Export the output to given format (CSV or JSON)",
-                        Name = "exportFile",
+                        Name = "Export",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "file path with extension", Description = "Where the export will be saved"
@@ -173,7 +173,7 @@ namespace CredentialCat.Console
                     new Option<string>(new [] {"-p", "--password", "-h", "--hash"})
                     {
                         Description = "Query to this specific password or hash",
-                        Name = "password",
+                        Name = "Password",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "query value", 
@@ -184,7 +184,7 @@ namespace CredentialCat.Console
                     new Option<string>(new [] {"-pL", "--password-list", "-hL", "--hash-list"})
                     {
                         Description = "Query to passwords and/or hashes on given wordlist",
-                        Name = "passwordList",
+                        Name = "PasswordList",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "wordlist path",
@@ -196,7 +196,7 @@ namespace CredentialCat.Console
                     new Option<string>(new [] {"-u", "--user", "-e", "--email"})
                     {
                         Description = "Query to this specific user(name) or email address",
-                        Name = "user",
+                        Name = "User",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "query value",
@@ -207,7 +207,7 @@ namespace CredentialCat.Console
                     new Option<string>(new [] {"-uL", "--user-list", "-eL", "--email-list"})
                     {
                         Description = "Query to user(s) and/or email address(es) on given wordlist",
-                        Name = "userList",
+                        Name = "UserList",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "wordlist path",
@@ -219,7 +219,7 @@ namespace CredentialCat.Console
                     new Option<string>(new [] {"-o", "--origin"})
                     {
                         Description = "Query to origin",
-                        Name = "origin",
+                        Name = "Origin",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "origin name",
@@ -227,6 +227,11 @@ namespace CredentialCat.Console
                         }
                     }
                 };
+
+                searchCommand.Handler = CommandHandler.Create<SearchCommandOptions>(options =>
+                {
+
+                });
 
                 return searchCommand;
             }
