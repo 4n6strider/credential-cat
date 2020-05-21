@@ -17,5 +17,4 @@ namespace CredentialCat.Shared.Entities
         public string Domain { get; set; }
         [Required] public DateTime IndexedAt { get; set; }
     }
-    `
 }

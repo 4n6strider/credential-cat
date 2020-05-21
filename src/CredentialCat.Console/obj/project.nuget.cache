@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Yovm3LNNSYJmDrJ6iO2LMlVJs/OgneMLYujdKFP1sqri5YNuipx0YznJvs9xWhD7UdtCN1tBZsk0k2ExvAsc+g==",
+  "dgSpecHash": "MJPslehxKU0lg9ry52GaUBBxBjSsBvPGej5mVMsBVbzs1vXxXOM3gA072hXOEFhTLnB7WFNMUY8oz6yvIr8DGg==",
   "success": true,
   "projectFilePath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Console\\CredentialCat.Console.csproj",
   "expectedPackageFiles": [
@@ -41,7 +41,9 @@
     "C:\\Users\\null\\.nuget\\packages\\system.componentmodel.annotations\\4.7.0\\system.componentmodel.annotations.4.7.0.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\system.diagnostics.diagnosticsource\\4.7.1\\system.diagnostics.diagnosticsource.4.7.1.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
-    "C:\\Users\\null\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512"
+    "C:\\Users\\null\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.2\\microsoft.netcore.app.host.win-x64.3.1.2.nupkg.sha512"
   ],
   "logs": []
 }

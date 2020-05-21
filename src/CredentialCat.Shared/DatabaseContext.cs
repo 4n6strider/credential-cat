@@ -7,7 +7,7 @@ namespace CredentialCat.Shared
     /// <summary>
     /// Represent current application cache SQlite database instance
     /// </summary>
-    public class DatabaseEntity : DbContext
+    public class DatabaseContext : DbContext
     {
         private readonly string _connectionString;
 
@@ -16,7 +16,7 @@ namespace CredentialCat.Shared
         /// </summary>
         public DbSet<CacheEntity> CacheEntities { get; set; }
 
-        public DatabaseEntity(string connectionString)
+        public DatabaseContext(string connectionString)
         {
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }

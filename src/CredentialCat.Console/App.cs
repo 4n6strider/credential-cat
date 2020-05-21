@@ -5,10 +5,13 @@ using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
 using System.CommandLine.Invocation;
+using Microsoft.EntityFrameworkCore;
+
 using static System.Console;
 
-using CredentialCat.Shared.Entities;
+using CredentialCat.Shared;
 using CredentialCat.Shared.Enums;
+using CredentialCat.Shared.Entities;
 
 namespace CredentialCat.Console
 {  internal static class App
@@ -22,6 +25,8 @@ namespace CredentialCat.Console
             var configurationFile = Path.Combine(home ?? throw new NullReferenceException(nameof(home)), "configuration.json");
 
             ConfigurationEntity configuration;
+
+            var context = new DatabaseContext($"Data Source = {Path.Combine(home, "cache.sqlite")}");
 
             #region Startup validations
 
@@ -40,6 +45,23 @@ namespace CredentialCat.Console
 
             configuration =
                 JsonSerializer.Deserialize<ConfigurationEntity>(await File.ReadAllTextAsync(configurationFile));
+
+            if (await context.Database.EnsureCreatedAsync())
+            {
+                await context.Database.MigrateAsync();
+            }
+
+            #endregion
+
+            #region Interruption validation
+
+            CancelKeyPress += async (sender, args) =>
+            {
+                WriteLine("[+] Exiting gratefully...");
+                await context.DisposeAsync();
+
+                args.Cancel = false;
+            };
 
             #endregion
 
@@ -69,8 +91,6 @@ namespace CredentialCat.Console
 
                 sourceCommand.Handler = CommandHandler.Create<bool, string>(async (list, source) =>
                 {
-                    WriteLine(source);
-                    
                     if (!string.IsNullOrEmpty(source))
                     {
                         if (!Enum.GetNames(typeof(SourceEnum)).Contains(source))
