@@ -390,7 +390,7 @@ namespace CredentialCat.Console
                         {
                             var splitter = newProxy.Split(':');
 
-                            if (!int.TryParse(splitter.Last(), out int port) || splitter.Length != 2)
+                            if (!int.TryParse(splitter.Last(), out var port) || splitter.Length != 2)
                             {
                                 WriteLine($"[!] Invalid format for {newProxy}!");
                                 WriteLine("[+] Valid proxy format example: 127.0.0.1:1337");
@@ -481,6 +481,47 @@ namespace CredentialCat.Console
                             await File.WriteAllTextAsync(configurationFile, content);
 
                             WriteLine("[+] Default proxy changed!");
+                        }
+
+                        if (!string.IsNullOrEmpty(importProxyList))
+                        {
+                            if (!File.Exists(importProxyList))
+                            {
+                                WriteLine("[!] Wordlist not exist!");
+                                Environment.Exit(1);
+                            }
+
+                            var lines = await File.ReadAllLinesAsync(importProxyList);
+
+                            foreach (var line in lines)
+                            {
+                                var splitter = line.Split(':');
+
+                                if (int.TryParse(splitter.Last(), out var port) || splitter.Length != 2)
+                                {
+                                    var proxy = new ProxyEntity
+                                    {
+                                        Id = Guid.NewGuid().ToString(),
+                                        Address = splitter.First(),
+                                        Port = port
+                                    };
+
+                                    if (!configuration.Proxies.Any(p => p.Address == proxy.Address && p.Port == proxy.Port))
+                                    {
+                                        configuration.Proxies.Add(proxy);
+
+                                        var content = JsonSerializer.Serialize(configuration);
+                                        await File.WriteAllTextAsync(configurationFile, content);
+
+                                        WriteLine($"[+] Proxy saved with ID {proxy.Id}");
+                                    }
+                                    else
+                                        WriteLine($"[!] Proxy {newProxy} already exist!");
+                                }
+
+                                WriteLine($"[!] Invalid format for {newProxy} in wordlist, ignoring...");
+
+                            }
                         }
                     });
 
