@@ -99,10 +99,16 @@ namespace CredentialCat.Console
                         Name = "caseSensitive"
                     },
 
+                    new Option<bool>(new [] {"-b", "--bypass-proxy"})
+                    {
+                        Description = "If the engine will bypass the proxy",
+                        Name = "bypassProxy"
+                    },
+
                     new Option<int>(new [] {"-t", "--timeout"})
                     {
                         Description = "Specify max timeout for HttpServer",
-                        Name = "password",
+                        Name = "timeout",
                         Argument = new Argument<int>
                         {
                             Arity = ArgumentArity.ZeroOrMore, Name = "milliseconds",
@@ -113,7 +119,7 @@ namespace CredentialCat.Console
                     new Option<int>(new [] {"-l", "--limit"})
                     {
                         Description = "Specify max entities to get",
-                        Name = "password",
+                        Name = "limit",
                         Argument = new Argument<int>
                         {
                             Arity = ArgumentArity.ZeroOrMore, Name = "limit",
