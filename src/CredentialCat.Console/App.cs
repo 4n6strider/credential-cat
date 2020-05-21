@@ -370,7 +370,7 @@ namespace CredentialCat.Console
                         if (list)
                         {
                             WriteLine("[+] Application available proxy(es):");
-                            WriteLine(" | id,address,port");
+                            WriteLine(" | id,address,port,default");
                             configuration.Proxies
                                 .Select(p =>
                                 {
@@ -438,7 +438,31 @@ namespace CredentialCat.Console
                             var content = JsonSerializer.Serialize(configuration);
                             await File.WriteAllTextAsync(configurationFile, content);
 
-                            WriteLine("[+] Proxy removed!!");
+                            WriteLine("[+] Proxy removed!");
+                        }
+
+                        if (!string.IsNullOrEmpty(defaultProxy))
+                        {
+                            if (configuration.DefaultProxyId == defaultProxy)
+                            {
+                                WriteLine("[!] Already is the default proxy!");
+                                Environment.Exit(1);
+                            }
+
+                            var proxy = configuration.Proxies.FirstOrDefault(p => p.Id == defaultProxy);
+
+                            if (proxy == null)
+                            {
+                                WriteLine($"[!] Can't find any proxy with given ID ({defaultProxy})!");
+                                Environment.Exit(1);
+                            }
+
+                            configuration.DefaultProxyId = defaultProxy;
+
+                            var content = JsonSerializer.Serialize(configuration);
+                            await File.WriteAllTextAsync(configurationFile, content);
+
+                            WriteLine("[+] Default proxy changed!");
                         }
                     });
 
