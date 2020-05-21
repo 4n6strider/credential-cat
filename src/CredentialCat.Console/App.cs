@@ -309,7 +309,60 @@ namespace CredentialCat.Console
 
             Command Proxy()
             {
-                var proxyCommand = new Command("proxy", "Create, list, import and export proxies");
+                var proxyCommand = new Command("proxy", "Set default, create, delete, list and import proxies")
+                {
+                    new Option<string>(new[] {"--set-default", "-s"})
+                    {
+                        Description = "Set the new default proxy",
+                        Name = "defaultProxy",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "id", Description = "Proxy unique identifier"
+                        }
+                    },
+
+                    new Option<string>(new[] {"--create", "-c"})
+                    {
+                        Description = "Create new proxy",
+                        Name = "newProxy",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "IP or address and port", Description = "Proxy on format ADDR:PORT"
+                        }
+                    },
+
+                    new Option<string>(new[] {"--delete", "-d"})
+                    {
+                        Description = "Delete a specific proxy by ID",
+                        Name = "deleteProxy",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "id", Description = "Proxy unique identifier"
+                        }
+                    },
+
+                    new Option<string>(new[] {"--import", "-i"})
+                    {
+                        Description = "Import multiple proxies by wordlist on format ADDR:PORT",
+                        Name = "deleteProxy",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "wordlist path", Description = "File with various proxies"
+                        }
+                    },
+
+                    new Option<bool>(new[] {"--delete-all", "-dA"})
+                    {
+                        Description = "Delete all the saved proxies (Dangerous!)",
+                        Name = "deleteAllProxies"
+                    },
+
+                    new Option<bool>(new[] {"--list", "-l"})
+                    {
+                        Description = "List available proxies and current default",
+                        Name = "list"
+                    }
+                };
 
                 return proxyCommand;
             }
