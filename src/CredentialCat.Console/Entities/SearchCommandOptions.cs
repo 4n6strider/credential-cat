@@ -11,6 +11,7 @@ namespace CredentialCat.Console.Entities
     public class SearchCommandOptions
     {
         private string _passwordList;
+        private string _userList;
 
         /// <summary>
         /// If the query will be ignore the cache database
@@ -78,7 +79,20 @@ namespace CredentialCat.Console.Entities
         /// <summary>
         /// User, username or email address
         /// </summary>
-        public string User { get; set; }
+        public string User
+        {
+            get => _userList;
+            set
+            {
+                if (!File.Exists(value))
+                {
+                    WriteLine($"[!] User(s) and/or email address(es) wordlist ({value}) not exist!");
+                    Environment.Exit(1);
+                }
+
+                _userList = value;
+            }
+        }
 
         /// <summary>
         /// User, username or email address wordlist
