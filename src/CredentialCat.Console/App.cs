@@ -67,6 +67,82 @@ namespace CredentialCat.Console
 
             #region Application comands
 
+            Command Search()
+            {
+                var searchCommand = new Command("search",
+                    $"Execute query against current data source ({Enum.GetName(typeof(SourceEnum), configuration.DefaultSource)})")
+                {
+                    // Logic options
+                    new Option<bool>(new [] {"-i", "--ignore-cache"})
+                    {
+                        Description = "If given query ignore cached values",
+                        Name = "ignore"
+                    },
+
+                    new Option<bool>(new [] {"-iU", "--ignore-update"})
+                    {
+                        Description = "Ignore update on cache database when query results exceed the timestamp",
+                        Name = "ignoreUpdate"
+                    },
+
+                    new Option<bool>(new [] {"-f", "--force-update"})
+                    {
+                        Description = "Force update on cache database with every query result",
+                        Name = "forceUpdate"
+                    },
+
+                    // Data input options
+
+                    // Password and hashes
+                    new Option<string>(new [] {"-p", "--password", "-h", "--hash"})
+                    {
+                        Description = "Query to this specific password or hash",
+                        Name = "password",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "query value", 
+                            Description = "Password or hash"
+                        }
+                    },
+
+                    new Option<string>(new [] {"-pL", "--password-list", "-hL", "--hash-list"})
+                    {
+                        Description = "Query to passwords and/or hashes on given wordlist",
+                        Name = "passwordList",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "wordlist path",
+                            Description = "Wordlist with password(s) and/or hash(es)"
+                        }
+                    },
+
+                    // User(name) and email addresses
+                    new Option<string>(new [] {"-u", "--user", "-e", "--email"})
+                    {
+                        Description = "Query to this specific user(name) or email address",
+                        Name = "user",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "query value",
+                            Description = "Email or user(name)"
+                        }
+                    },
+
+                    new Option<string>(new [] {"-uL", "--user-list", "-eL", "--email-list"})
+                    {
+                        Description = "Query to user(s) and/or email address(es) on given wordlist",
+                        Name = "userList",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "wordlist path",
+                            Description = "Wordlist with user(s) and/or address(es)"
+                        }
+                    }
+                };
+
+                return searchCommand;
+            }
+
             Command Source()
             {
                 var sourceCommand = new Command("source",
@@ -158,7 +234,8 @@ namespace CredentialCat.Console
                 ApplicationEnvironment(),
 
                 // Commands
-                Source()
+                Source(),
+                Search()
             };
 
             commands.Handler = CommandHandler.Create<bool, bool>((env, source) =>
