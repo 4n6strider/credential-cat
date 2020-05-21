@@ -111,7 +111,7 @@ namespace CredentialCat.Console
                         Name = "timeout",
                         Argument = new Argument<int>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "milliseconds",
+                            Arity = ArgumentArity.ZeroOrOne, Name = "milliseconds",
                             Description = "How many time will be waited before error"
                         }
                     },
@@ -127,6 +127,16 @@ namespace CredentialCat.Console
                         }
                     },
 
+                    new Option<string>(new[] {"--export"})
+                    {
+                        Description = "Export the output to given format (CSV or JSON)",
+                        Name = "exportFile",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "file path", Description = "Where the export will be saved"
+                        }
+                    },
+
                     // Data input options
 
                     // Password and hashes
@@ -136,7 +146,7 @@ namespace CredentialCat.Console
                         Name = "password",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "query value", 
+                            Arity = ArgumentArity.ExactlyOne, Name = "query value", 
                             Description = "Password or hash"
                         }
                     },
@@ -147,7 +157,7 @@ namespace CredentialCat.Console
                         Name = "passwordList",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "wordlist path",
+                            Arity = ArgumentArity.ExactlyOne, Name = "wordlist path",
                             Description = "Wordlist with password(s) and/or hash(es)"
                         }
                     },
@@ -159,7 +169,7 @@ namespace CredentialCat.Console
                         Name = "user",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "query value",
+                            Arity = ArgumentArity.ExactlyOne, Name = "query value",
                             Description = "Email or user(name)"
                         }
                     },
@@ -170,7 +180,7 @@ namespace CredentialCat.Console
                         Name = "userList",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "wordlist path",
+                            Arity = ArgumentArity.ExactlyOne, Name = "wordlist path",
                             Description = "Wordlist with user(s) and/or address(es)"
                         }
                     },
@@ -182,7 +192,7 @@ namespace CredentialCat.Console
                         Name = "origin",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ZeroOrMore, Name = "origin name",
+                            Arity = ArgumentArity.ExactlyOne, Name = "origin name",
                             Description = "Origin name to search"
                         }
                     }
