@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
 using System.CommandLine.Invocation;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
 using static System.Console;
@@ -57,6 +58,7 @@ namespace CredentialCat.Console
 
             CancelKeyPress += async (sender, args) =>
             {
+                WriteLine();
                 WriteLine("[+] Exiting gratefully...");
                 await context.DisposeAsync();
 
@@ -70,7 +72,7 @@ namespace CredentialCat.Console
             Command Search()
             {
                 var searchCommand = new Command("search",
-                    $"Execute query against current data source ({Enum.GetName(typeof(SourceEnum), configuration.DefaultSource)})")
+                    $"Execute searches against current data source ({Enum.GetName(typeof(SourceEnum), configuration.DefaultSource)})")
                 {
                     // Logic options
                     new Option<bool>(new [] {"-i", "--ignore-cache"})
@@ -141,6 +143,82 @@ namespace CredentialCat.Console
                 };
 
                 return searchCommand;
+            }
+
+            Command Cache()
+            {
+                var cacheCommand = new Command("cache", "Flush or query inside the cache database")
+                {
+                    new Option<bool>(new[] {"-f", "--flush"})
+                    {
+                        Description = "Flush the entire cache database. Permanent data lost (Dangerous!)",
+                        Name = "flush",
+                    },
+
+                    new Option<string>(new [] {"-q", "--query"})
+                    {
+                        Description = "Perform a SQlite raw query inside cache database (Dangerous, you can have SQLi here!)",
+                        Name = "query",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "query",
+                            Description = "SQlite query"
+                        }
+                    }
+                };
+
+                cacheCommand.Handler = CommandHandler.Create<bool, string>(async (flush, query) =>
+                {
+                    if (!string.IsNullOrEmpty(query))
+                    {
+                        var command = context.Database.GetDbConnection().CreateCommand();
+#pragma warning disable CA2100
+                        command.CommandText = query;
+#pragma warning restore CA2100
+
+                        await context.Database.OpenConnectionAsync();
+                        var result = await command.ExecuteReaderAsync();
+
+                        if (!result.HasRows)
+                        {
+                            WriteLine("[!] No rows returned!");
+                            Environment.Exit(1);
+                        }
+
+                        while (await result.ReadAsync())
+                        {
+                            for (var i = 0; i < result.FieldCount; i++)
+                            {
+                                string dump;
+
+                                if (await result.IsDBNullAsync(i))
+                                    dump = "NULL";
+                                else
+                                    dump = result.GetString(i);
+
+                                var column = result.GetName(0);
+                                WriteLine($"{result.GetName(i)} : {dump}");
+                            }
+
+                            WriteLine();
+                        }
+
+                    }
+
+                    if (flush)
+                    {
+                        Write("[!] If you continue, the entire database will be erased [y/N] ");
+
+                        if (ReadKey().Key == ConsoleKey.Y)
+                        {
+                            WriteLine();
+                            await context.Database.EnsureDeletedAsync();
+                            WriteLine("[+] Database flushed!");
+                        }
+                    }
+                });
+
+                return cacheCommand;
             }
 
             Command Source()
@@ -235,7 +313,8 @@ namespace CredentialCat.Console
 
                 // Commands
                 Source(),
-                Search()
+                Search(),
+                Cache()
             };
 
             commands.Handler = CommandHandler.Create<bool, bool>((env, source) =>
