@@ -84,7 +84,8 @@ namespace CredentialCat.Console.Entities
         /// <summary>
         /// User, username or email address wordlist
         /// </summary>
-        public string UserList {
+        public string UserList 
+        {
             get => _userList;
             set
             {
