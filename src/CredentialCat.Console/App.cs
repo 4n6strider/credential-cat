@@ -388,7 +388,6 @@ namespace CredentialCat.Console
                         if (!string.IsNullOrEmpty(newProxy))
                         {
                             var splitter = newProxy.Split(':');
-                            var addr = splitter.First();
 
                             if (!int.TryParse(splitter.Last(), out int port) || splitter.Length != 2)
                             {
@@ -400,9 +399,15 @@ namespace CredentialCat.Console
                             var proxy = new ProxyEntity
                             {
                                 Id = Guid.NewGuid().ToString(),
-                                Address = addr,
+                                Address = splitter.First(),
                                 Port = port
                             };
+
+                            if (configuration.Proxies.Any(p => p.Address == proxy.Address && p.Port == proxy.Port))
+                            {
+                                WriteLine($"[!] Proxy {newProxy} already exist!");
+                                Environment.Exit(1);
+                            }
 
                             configuration.Proxies.Add(proxy);
 
@@ -410,6 +415,30 @@ namespace CredentialCat.Console
                             await File.WriteAllTextAsync(configurationFile, content);
 
                             WriteLine($"[+] Proxy saved with ID {proxy.Id}");
+                        }
+
+                        if (!string.IsNullOrEmpty(deleteProxy))
+                        {
+                            if (configuration.DefaultProxyId == deleteProxy)
+                            {
+                                WriteLine("[!] You can't remove the default proxy!");
+                                Environment.Exit(1);
+                            }
+
+                            var proxy = configuration.Proxies.FirstOrDefault(p => p.Id == deleteProxy);
+
+                            if (proxy == null)
+                            {
+                                WriteLine($"[!] Can't find any proxy with given ID ({deleteProxy})!");
+                                Environment.Exit(1);
+                            }
+
+                            configuration.Proxies.Remove(proxy);
+
+                            var content = JsonSerializer.Serialize(configuration);
+                            await File.WriteAllTextAsync(configurationFile, content);
+
+                            WriteLine("[+] Proxy removed!!");
                         }
                     });
 
