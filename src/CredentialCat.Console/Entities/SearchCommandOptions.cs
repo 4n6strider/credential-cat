@@ -69,6 +69,8 @@ namespace CredentialCat.Console.Entities
                     WriteLine($"[!] Export file {value} already exist!");
                     Environment.Exit(1);
                 }
+
+                _export = value;
             }
         }
 
