@@ -99,6 +99,17 @@ namespace CredentialCat.Console
                         Name = "caseSensitive"
                     },
 
+                    new Option<int>(new [] {"-t", "--timeout"})
+                    {
+                        Description = "Specify max timeout for HttpServer",
+                        Name = "password",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "milliseconds",
+                            Description = "How many time will be waited before error"
+                        }
+                    },
+
                     // Data input options
 
                     // Password and hashes
