@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -351,7 +352,7 @@ namespace CredentialCat.Console
                         }
                     },
 
-                    new Option<bool>(new[] {"--delete-all", "-dA"})
+                    new Option<bool>(new[] {"--remove-all", "-rA"})
                     {
                         Description = "Delete all the saved proxies (Dangerous!)",
                         Name = "deleteAllProxies"
@@ -439,6 +440,23 @@ namespace CredentialCat.Console
                             await File.WriteAllTextAsync(configurationFile, content);
 
                             WriteLine("[+] Proxy removed!");
+                        }
+
+                        if (deleteAllProxies)
+                        {
+                            Write("[!] If you continue, al the proxies will be erased, including your default [y/N] ");
+
+                            if (ReadKey().Key == ConsoleKey.Y)
+                            {
+                                WriteLine();
+
+                                configuration.Proxies = new List<ProxyEntity>();
+
+                                var content = JsonSerializer.Serialize(configuration);
+                                await File.WriteAllTextAsync(configurationFile, content);
+
+                                WriteLine("[+] Proxies removed!");
+                            }
                         }
 
                         if (!string.IsNullOrEmpty(defaultProxy))
