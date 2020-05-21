@@ -133,7 +133,7 @@ namespace CredentialCat.Console
                         Name = "exportFile",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ExactlyOne, Name = "file path", Description = "Where the export will be saved"
+                            Arity = ArgumentArity.ExactlyOne, Name = "file path with extension", Description = "Where the export will be saved"
                         }
                     },
 
