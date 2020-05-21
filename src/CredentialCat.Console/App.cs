@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Reflection;
 using System.CommandLine;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.CommandLine.Invocation;
+using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 
 using static System.Console;
@@ -13,6 +15,7 @@ using static System.Console;
 using CredentialCat.Shared;
 using CredentialCat.Shared.Enums;
 using CredentialCat.Shared.Entities;
+using CredentialCat.Shared.Interfaces;
 
 namespace CredentialCat.Console
 {  internal static class App
@@ -53,6 +56,33 @@ namespace CredentialCat.Console
             }
 
             #endregion
+
+            #region Helpers
+
+            IEngine GetEngine()
+            {
+                var sourceName = Enum.GetName(typeof(SourceEnum), configuration.DefaultSource);
+
+                if (string.IsNullOrEmpty(sourceName))
+                {
+                    throw new NullReferenceException(nameof(sourceName));
+                }
+
+                var engineAssemblies = Assembly.GetExecutingAssembly()
+                    .GetTypes()
+                    .Where(t => t.BaseType == typeof(IEngine));
+
+                var engineAssembly = engineAssemblies.FirstOrDefault(t => t.Name.Contains(sourceName, StringComparison.InvariantCulture));
+
+                if (engineAssembly == null)
+                {
+                    throw new NullReferenceException(nameof(engineAssembly));
+                }
+
+                return Activator.CreateInstance(engineAssembly) as IEngine;
+            }
+
+            #endregion 
 
             #region Interruption validation
 
@@ -321,7 +351,8 @@ namespace CredentialCat.Console
 
                         configuration.DefaultSource = newSource;
 
-                        JsonSerializer.Deserialize<ConfigurationEntity>(await File.ReadAllTextAsync(configurationFile));
+                        var content = JsonSerializer.Serialize(configuration);
+                        await File.WriteAllTextAsync(configurationFile, content);
                     }
 
                     if (list)

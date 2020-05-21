@@ -12,6 +12,13 @@ namespace CredentialCat.Shared.Engines
     /// </summary>
     public class PwndbEngine : IEngine
     {
+        private readonly DatabaseContext _context;
+
+        public PwndbEngine(DatabaseContext databaseContext)
+        {
+            _context = databaseContext;
+        }
+
         public Task<IQueryable<CacheEntity>> SearchByUserOrEmail(string value, bool ignoreCache, bool ignoreUpdate, bool forceUpdate, bool caseSensitive,
             int timeout, int limit, bool bypassProxy)
         {
