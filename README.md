@@ -47,6 +47,32 @@ For every request the `credential-cat` holds a powerful cache for evading server
 
 
 
+## Developing custom data sources
+
+Application allows the users to extend the data sources options by implementing the `IEngine` interface, the binary need to match with the existent target version of the `CredentialCat.Shared` dotnet runtime. You can manage sources extensions by using the `source` command on the CLI. Above we have a *hello, world!* example:
+
+```csharp
+public class CustomEngine : IEngine 
+{
+    private readonly DatabaseContext _context;
+    
+    public CustomEngine(DatabaseContext databaseContext)
+    {
+        _context = databaseContext;
+    }
+
+    public Task<IQueryable<CacheEntity>> SearchByUserOrEmail(string value, bool ignoreCache, bool ignoreUpdate, bool forceUpdate, bool caseSensitive, int timeout, int limit, bool bypassProxy)
+    {
+        System.Console.WriteLine("Hello, world!");
+        Environment.Exit(0);
+    }
+// ...
+```
+
+Also, is necessary to have this signature for `IEngine` implementation constructor, to interact with the cache database. On the future, we will provide a wrapper for data persistence.
+
+
+
 ## Building the *purr*
 
 The `credential-cat` needs dotnet core SDK up to 3.1 for work properly on development build, currently we don't have any production-ready release. Any text-editor or IDE is good enough to work with this tool. I am using Visual Studio 2019 with ReSharper Ultimate 2020.1.3.
