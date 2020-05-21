@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.CommandLine.Invocation;
 using static System.Console;
 
 using CredentialCat.Shared.Entities;
+using CredentialCat.Shared.Enums;
 
 namespace CredentialCat.Console
 {  internal static class App
@@ -37,6 +39,9 @@ namespace CredentialCat.Console
                 await File.WriteAllTextAsync(configurationFile, content);
             }
 
+            configuration =
+                JsonSerializer.Deserialize<ConfigurationEntity>(await File.ReadAllTextAsync(configurationFile));
+
             #endregion
 
             #region Application comands
@@ -57,14 +62,27 @@ namespace CredentialCat.Console
                 return statementOption;
             }
 
+            static Option ListAvailableSources()
+            {
+                var statementOption = new Option(new[] { "-s", "--list-sources" })
+                {
+                    Description = "List available application sources",
+                    Name = "source"
+                };
+
+                return statementOption;
+            }
+
             #endregion
 
             var commands = new RootCommand
             {
-                ApplicationEnvironment()
+                // Options
+                ApplicationEnvironment(),
+                ListAvailableSources()
             };
 
-            commands.Handler = CommandHandler.Create<bool>(env =>
+            commands.Handler = CommandHandler.Create<bool, bool>((env, source) =>
             {
                 if (env)
                 {
@@ -76,6 +94,24 @@ namespace CredentialCat.Console
                     WriteLine(string.IsNullOrEmpty(envHome)
                         ? $" > CREDENTIAL_CAT_HOME is empty, default value in use: {home}"
                         : $" > CREDENTIAL_CAT_HOME: {envHome}");
+                }
+
+                if (source)
+                {
+                    WriteLine("[+] Application available sources:");
+
+                     Enum.GetNames(typeof(SourceEnum))
+                         .Select(e =>
+                         {
+                             if ((SourceEnum) Enum.Parse(typeof(SourceEnum), e) == configuration.DefaultSource)
+                             {
+                                 e += " (current source)";
+                             }
+
+                             return e;
+                         })
+                        .ToList()
+                        .ForEach(e => WriteLine($" > {e}"));
                 }
             });
 
