@@ -79,8 +79,12 @@ namespace CredentialCat.Console.Entities
         /// <summary>
         /// User, username or email address
         /// </summary>
-        public string User
-        {
+        public string User { get; set; }
+
+        /// <summary>
+        /// User, username or email address wordlist
+        /// </summary>
+        public string UserList {
             get => _userList;
             set
             {
@@ -93,11 +97,6 @@ namespace CredentialCat.Console.Entities
                 _userList = value;
             }
         }
-
-        /// <summary>
-        /// User, username or email address wordlist
-        /// </summary>
-        public string UserList { get; set; }
 
         /// <summary>
         /// If present, search on cache database with specific origin
