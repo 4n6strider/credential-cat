@@ -1,4 +1,5 @@
 ﻿using System;
+using CredentialCat.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CredentialCat.Shared
@@ -9,6 +10,11 @@ namespace CredentialCat.Shared
     public class DatabaseEntity : DbContext
     {
         private readonly string _connectionString;
+
+        /// <summary>
+        /// Cached searches to any data source
+        /// </summary>
+        public DbSet<CacheEntity> CacheEntities { get; set; }
 
         public DatabaseEntity(string connectionString)
         {
