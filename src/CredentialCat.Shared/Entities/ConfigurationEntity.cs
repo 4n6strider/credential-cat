@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using CredentialCat.Shared.Enums;
 
 namespace CredentialCat.Shared.Entities
@@ -12,13 +13,12 @@ namespace CredentialCat.Shared.Entities
         /// <summary>
         /// List of Tor HTTP proxies addresses
         /// </summary>
-        /// <para>Default proxy entity is 127.0.0.1:8118</para>
-        public ICollection<ProxyEntity> Proxies { get; set; }
+        public ICollection<ProxyEntity> Proxies { get; set; } = new List<ProxyEntity>();
 
         /// <summary>
-        /// Set if the application ignore the local cache
+        /// Default proxy ID for generic communication
         /// </summary>
-        public bool OnlyFreshResults { get; set; } = false;
+        public string DefaultProxyId { get; set; }
 
         /// <summary>
         /// Set the application max time for a credential cache

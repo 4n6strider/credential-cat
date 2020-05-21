@@ -300,7 +300,7 @@ namespace CredentialCat.Console
                                 return e;
                             })
                             .ToList()
-                            .ForEach(e => WriteLine($" > {e}"));
+                            .ForEach(e => WriteLine($" | {e}"));
                     }
                 });
 
@@ -344,7 +344,7 @@ namespace CredentialCat.Console
                     new Option<string>(new[] {"--import", "-i"})
                     {
                         Description = "Import multiple proxies by wordlist on format ADDR:PORT",
-                        Name = "deleteProxy",
+                        Name = "importProxyList",
                         Argument = new Argument<string>
                         {
                             Arity = ArgumentArity.ExactlyOne, Name = "wordlist path", Description = "File with various proxies"
@@ -363,6 +363,55 @@ namespace CredentialCat.Console
                         Name = "list"
                     }
                 };
+
+                proxyCommand.Handler = CommandHandler.Create<string, string, string, string, bool, bool>(
+                    async (defaultProxy, newProxy, deleteProxy, importProxyList, deleteAllProxies, list) =>
+                    {
+                        if (list)
+                        {
+                            WriteLine("[+] Application available proxy(es):");
+                            WriteLine(" | id,address,port");
+                            configuration.Proxies
+                                .Select(p =>
+                                {
+                                    var parsed = $"{p.Id},{p.Address},{p.Port}";
+
+                                    if (p.Id == configuration.DefaultProxyId)
+                                        parsed += ",Y";
+
+                                    return parsed;
+                                })
+                                .ToList()
+                                .ForEach(p => WriteLine($" | {p}"));
+                        }
+
+                        if (!string.IsNullOrEmpty(newProxy))
+                        {
+                            var splitter = newProxy.Split(':');
+                            var addr = splitter.First();
+
+                            if (!int.TryParse(splitter.Last(), out int port) || splitter.Length != 2)
+                            {
+                                WriteLine($"[!] Invalid format for {newProxy}!");
+                                WriteLine("[+] Valid proxy format example: 127.0.0.1:1337");
+                                Environment.Exit(1);
+                            }
+
+                            var proxy = new ProxyEntity
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Address = addr,
+                                Port = port
+                            };
+
+                            configuration.Proxies.Add(proxy);
+
+                            var content = JsonSerializer.Serialize(configuration);
+                            await File.WriteAllTextAsync(configurationFile, content);
+
+                            WriteLine($"[+] Proxy saved with ID {proxy.Id}");
+                        }
+                    });
 
                 return proxyCommand;
             }
