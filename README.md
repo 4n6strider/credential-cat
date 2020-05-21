@@ -17,7 +17,7 @@
 
 > ### ⚠️ Work in progress!
 >
-> As I [@BizarreNULLij](https://github.com/BizarreNULL) currently am the sole maintainer of this *repo* due to my job and mangá vicious. Interested in helping out with triage, troubleshooting or issue handling? Let me know!
+> As I [@BizarreNULL](https://github.com/BizarreNULL) currently am the sole maintainer of this *repo* due to my job and mangá vicious, maybe the things seem to be a little bit slower. Interested in helping out to make this more useful? With triage, troubleshooting, or issue handling? Let me know!
 
 
 
