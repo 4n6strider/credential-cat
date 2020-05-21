@@ -103,10 +103,21 @@ namespace CredentialCat.Console
                     {
                         Description = "Specify max timeout for HttpServer",
                         Name = "password",
-                        Argument = new Argument<string>
+                        Argument = new Argument<int>
                         {
                             Arity = ArgumentArity.ZeroOrMore, Name = "milliseconds",
                             Description = "How many time will be waited before error"
+                        }
+                    },
+
+                    new Option<int>(new [] {"-l", "--limit"})
+                    {
+                        Description = "Specify max entities to get",
+                        Name = "password",
+                        Argument = new Argument<int>
+                        {
+                            Arity = ArgumentArity.ZeroOrMore, Name = "limit",
+                            Description = "How many entities will be indexed"
                         }
                     },
 
