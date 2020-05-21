@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
 using System.CommandLine.Invocation;
-using System.Globalization;
 using static System.Console;
 
 using CredentialCat.Shared.Entities;
