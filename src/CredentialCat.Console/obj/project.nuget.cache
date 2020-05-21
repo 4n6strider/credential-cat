@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Lr7dJODDZOHB5mJ03rLrQjLhn1feYx5QXljj/lkIR2KcL75tzGvWgHv2CkRD6fIMdn/RIfo5gkMuOlMCWOAdkw==",
+  "dgSpecHash": "2K5mZpQGOOuTEULDKmqjLVEEjNlRHNHmltct1mBai6PGQR3EkfbKuwgGzUW1WFca8qnnRAc+IHRP/puPdftPPA==",
   "success": true,
   "projectFilePath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Console\\CredentialCat.Console.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,9 @@
     "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.analyzers\\2.9.6\\microsoft.netcore.analyzers.2.9.6.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\microsoft.netframework.analyzers\\2.9.6\\microsoft.netframework.analyzers.2.9.6.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\system.commandline\\2.0.0-beta1.20253.1\\system.commandline.2.0.0-beta1.20253.1.nupkg.sha512",
-    "C:\\Users\\null\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
+    "C:\\Users\\null\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.2\\microsoft.netcore.app.host.win-x64.3.1.2.nupkg.sha512"
   ],
   "logs": []
 }

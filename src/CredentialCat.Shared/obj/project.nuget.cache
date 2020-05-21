@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "pTXj6hgVfR2Jq67uCLCoRhA5b51aZaTeARfcHqGep9ZsvEuW7YfUWtnyHUR7Ms3xWj1DJpTbjfDAO0cZW/6iKA==",
+  "dgSpecHash": "eWuBQS2NQzyY742oT6+fhhYqRWZlBT8AUZcMIvChXMxTMgHdSCJUWek16M7yEOxkrG9xqENOqlJHXdV3pXNEAg==",
   "success": true,
   "projectFilePath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Shared\\CredentialCat.Shared.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
+  ],
   "logs": []
 }
