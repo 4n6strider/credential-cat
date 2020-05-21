@@ -230,7 +230,14 @@ namespace CredentialCat.Console
 
                 searchCommand.Handler = CommandHandler.Create<SearchCommandOptions>(options =>
                 {
-
+                    if (string.IsNullOrEmpty(options.Origin) || string.IsNullOrEmpty(options.PasswordList) ||
+                        string.IsNullOrEmpty(options.Password) || string.IsNullOrEmpty(options.User) ||
+                        string.IsNullOrEmpty(options.UserList))
+                    {
+                        WriteLine("[!] No search instructions have been parameterized!");
+                        WriteLine("[+] See `search --help` for more information");
+                        Environment.Exit(1);
+                    }
                 });
 
                 return searchCommand;
