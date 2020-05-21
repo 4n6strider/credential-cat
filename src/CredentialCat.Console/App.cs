@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.CommandLine;
 using System.Threading.Tasks;
 using System.CommandLine.Invocation;
-
+using System.Globalization;
 using static System.Console;
 
 using CredentialCat.Shared.Entities;
@@ -46,7 +46,76 @@ namespace CredentialCat.Console
 
             #region Application comands
 
+            Command Source()
+            {
+                var sourceCommand = new Command("source",
+                    "List and select default data source for credentials enumeration")
+                {
+                    new Option<bool>(new[] {"--list", "-l"})
+                    {
+                        Description = "List available sources and current active data source",
+                        Name = "list"
+                    },
 
+                    new Option<string>(new[] {"--set-default", "-s"})
+                    {
+                        Description = "Set the new default data source",
+                        Name = "source",
+                        Argument = new Argument<string>
+                        {
+                            Arity = ArgumentArity.ExactlyOne, Name = "data source", Description = "Data source name"
+                        }
+                    }
+                };
+
+                sourceCommand.Handler = CommandHandler.Create<bool, string>(async (list, source) =>
+                {
+                    WriteLine(source);
+                    
+                    if (!string.IsNullOrEmpty(source))
+                    {
+                        if (!Enum.GetNames(typeof(SourceEnum)).Contains(source))
+                        {
+                            WriteLine("[!] Invalid data source!");
+                            WriteLine("[+] List available data sources with `sources --list`");
+                            Environment.Exit(1);
+                        }
+
+                        var newSource = (SourceEnum) Enum.Parse(typeof(SourceEnum), source);
+
+                        if (newSource == configuration.DefaultSource)
+                        {
+                            WriteLine($"[!] {source} already is the default data source!");
+                            WriteLine("[+] List available data sources with `sources --list`");
+                            Environment.Exit(1);
+                        }
+
+                        configuration.DefaultSource = newSource;
+
+                        JsonSerializer.Deserialize<ConfigurationEntity>(await File.ReadAllTextAsync(configurationFile));
+                    }
+
+                    if (list)
+                    {
+                        WriteLine("[+] Application available sources:");
+
+                        Enum.GetNames(typeof(SourceEnum))
+                            .Select(e =>
+                            {
+                                if ((SourceEnum)Enum.Parse(typeof(SourceEnum), e) == configuration.DefaultSource)
+                                {
+                                    e += " (current source)";
+                                }
+
+                                return e;
+                            })
+                            .ToList()
+                            .ForEach(e => WriteLine($" > {e}"));
+                    }
+                });
+
+                return sourceCommand;
+            }
 
             #endregion
 
@@ -62,31 +131,21 @@ namespace CredentialCat.Console
                 return statementOption;
             }
 
-            static Option ListAvailableSources()
-            {
-                var statementOption = new Option(new[] { "-s", "--list-sources" })
-                {
-                    Description = "List available application sources",
-                    Name = "source"
-                };
-
-                return statementOption;
-            }
-
             #endregion
 
             var commands = new RootCommand
             {
                 // Options
                 ApplicationEnvironment(),
-                ListAvailableSources()
+
+                // Commands
+                Source()
             };
 
             commands.Handler = CommandHandler.Create<bool, bool>((env, source) =>
             {
                 if (env)
                 {
-
                     WriteLine("[+] Application environment variables:");
 
                     var envHome = Environment.GetEnvironmentVariable("CREDENTIAL_CAT_HOME");
@@ -95,28 +154,10 @@ namespace CredentialCat.Console
                         ? $" > CREDENTIAL_CAT_HOME is empty, default value in use: {home}"
                         : $" > CREDENTIAL_CAT_HOME: {envHome}");
                 }
-
-                if (source)
-                {
-                    WriteLine("[+] Application available sources:");
-
-                     Enum.GetNames(typeof(SourceEnum))
-                         .Select(e =>
-                         {
-                             if ((SourceEnum) Enum.Parse(typeof(SourceEnum), e) == configuration.DefaultSource)
-                             {
-                                 e += " (current source)";
-                             }
-
-                             return e;
-                         })
-                        .ToList()
-                        .ForEach(e => WriteLine($" > {e}"));
-                }
             });
 
             commands.Description = "credential-cat help you to enumerate leaked credentials on several sources around the dark web (also in surface).";
-            return await commands.InvokeAsync(args).ConfigureAwait(true);
+            return await commands.InvokeAsync(args);
         }
     }
 }
