@@ -1,8 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "YVR6RJaeIEYM9StxL5atrr9XascwuLS5EXeZj9Qx34BaUCECFTFfy5UdqHGAchFh2cyxxPkJVu/9vxMKaOP/IQ==",
+  "dgSpecHash": "xgnKra7s5v4YQVs46gvM5YD5Q0ztVy3JmA75Gm8eRqSWvGHZFBO6WBamPp+JN2gcoxt/S3JPJ3qX/63SbfJAMg==",
   "success": true,
   "projectFilePath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Console\\CredentialCat.Console.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.codeanalysis.fxcopanalyzers\\2.9.6\\microsoft.codeanalysis.fxcopanalyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.codeanalysis.versioncheckanalyzer\\2.9.6\\microsoft.codeanalysis.versioncheckanalyzer.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.codequality.analyzers\\2.9.6\\microsoft.codequality.analyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.analyzers\\2.9.6\\microsoft.netcore.analyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netframework.analyzers\\2.9.6\\microsoft.netframework.analyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.2\\microsoft.netcore.app.host.win-x64.3.1.2.nupkg.sha512"
+  ],
   "logs": []
 }
