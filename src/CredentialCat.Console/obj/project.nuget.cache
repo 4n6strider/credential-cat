@@ -1,14 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "c0FdFdvEpk0oFfnZzWQ4+8ZhOILz3tuuvpeSQWZESuoM7/HIVrAXtOytFKqfV8ppjKsJRCj4yonqFy26r5w5Kg==",
+  "dgSpecHash": "Lr7dJODDZOHB5mJ03rLrQjLhn1feYx5QXljj/lkIR2KcL75tzGvWgHv2CkRD6fIMdn/RIfo5gkMuOlMCWOAdkw==",
   "success": true,
   "projectFilePath": "C:\\Users\\null\\Projects\\credential-cat\\src\\CredentialCat.Console\\CredentialCat.Console.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\null\\.nuget\\packages\\microsoft.codeanalysis.fxcopanalyzers\\2.9.6\\microsoft.codeanalysis.fxcopanalyzers.2.9.6.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\microsoft.codeanalysis.versioncheckanalyzer\\2.9.6\\microsoft.codeanalysis.versioncheckanalyzer.2.9.6.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\microsoft.codequality.analyzers\\2.9.6\\microsoft.codequality.analyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.csharp\\4.4.1\\microsoft.csharp.4.4.1.nupkg.sha512",
     "C:\\Users\\null\\.nuget\\packages\\microsoft.netcore.analyzers\\2.9.6\\microsoft.netcore.analyzers.2.9.6.nupkg.sha512",
-    "C:\\Users\\null\\.nuget\\packages\\microsoft.netframework.analyzers\\2.9.6\\microsoft.netframework.analyzers.2.9.6.nupkg.sha512"
+    "C:\\Users\\null\\.nuget\\packages\\microsoft.netframework.analyzers\\2.9.6\\microsoft.netframework.analyzers.2.9.6.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\system.commandline\\2.0.0-beta1.20253.1\\system.commandline.2.0.0-beta1.20253.1.nupkg.sha512",
+    "C:\\Users\\null\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
   ],
   "logs": []
 }
