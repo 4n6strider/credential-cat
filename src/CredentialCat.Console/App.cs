@@ -7,6 +7,7 @@ using System.CommandLine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.CommandLine.Invocation;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 
 using static System.Console;
@@ -18,7 +19,8 @@ using CredentialCat.Console.Entities;
 using CredentialCat.Shared.Interfaces;
 
 namespace CredentialCat.Console
-{  internal static class App
+{
+    internal static class App
     {
         private static async Task<int> Main(string[] args)
         {
@@ -26,7 +28,8 @@ namespace CredentialCat.Console
                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ".credential_cat")
                 : Environment.GetEnvironmentVariable("CREDENTIAL_CAT_HOME");
 
-            var configurationFile = Path.Combine(home ?? throw new NullReferenceException(nameof(home)), "configuration.json");
+            var configurationFile =
+                Path.Combine(home ?? throw new NullReferenceException(nameof(home)), "configuration.json");
 
             ConfigurationEntity configuration;
 
@@ -68,21 +71,28 @@ namespace CredentialCat.Console
                     throw new NullReferenceException(nameof(sourceName));
                 }
 
-                var engineAssemblies = Assembly.GetExecutingAssembly()
-                    .GetTypes()
-                    .Where(t => t.BaseType == typeof(IEngine));
+                var engineType = AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .SelectMany(a => a.GetTypes())
+                    .FirstOrDefault(t =>
+                        typeof(IEngine).IsAssignableFrom(t) && t.IsClass &&
+                        t.Name.StartsWith(sourceName, StringComparison.InvariantCulture));
 
-                var engineAssembly = engineAssemblies.FirstOrDefault(t => t.Name.Contains(sourceName, StringComparison.InvariantCulture));
-
-                if (engineAssembly == null)
+                if (engineType == null)
                 {
-                    throw new NullReferenceException(nameof(engineAssembly));
+                    throw new NullReferenceException(nameof(engineType));
                 }
 
-                return Activator.CreateInstance(engineAssembly) as IEngine;
+                if (string.IsNullOrEmpty(engineType.FullName))
+                {
+                    throw new NullReferenceException(nameof(engineType.FullName));
+                }
+
+                return engineType.Assembly.CreateInstance(engineType.FullName, false, BindingFlags.CreateInstance,
+                    null, new[] {context}, CultureInfo.InvariantCulture, null) as IEngine;
             }
 
-            #endregion 
+            #endregion
 
             #region Interruption validation
 
@@ -105,37 +115,37 @@ namespace CredentialCat.Console
                     $"Execute searches against current data source ({Enum.GetName(typeof(SourceEnum), configuration.DefaultSource)})")
                 {
                     // Logic options
-                    new Option<bool>(new [] {"-i", "--ignore-cache"})
+                    new Option<bool>(new[] {"-i", "--ignore-cache"})
                     {
                         Description = "If given query ignore cached values",
                         Name = "IgnoreCache"
                     },
 
-                    new Option<bool>(new [] {"-iU", "--ignore-update"})
+                    new Option<bool>(new[] {"-iU", "--ignore-update"})
                     {
                         Description = "Ignore update on cache database when query results exceed the timestamp",
                         Name = "IgnoreUpdate"
                     },
 
-                    new Option<bool>(new [] {"-f", "--force-update"})
+                    new Option<bool>(new[] {"-f", "--force-update"})
                     {
                         Description = "Force update on cache database with every query result",
                         Name = "ForceUpdate"
                     },
 
-                    new Option<bool>(new [] {"-c", "--case-sensitive"})
+                    new Option<bool>(new[] {"-c", "--case-sensitive"})
                     {
                         Description = "If the engine will respect case sensitive to match query pattern",
                         Name = "CaseSensitive"
                     },
 
-                    new Option<bool>(new [] {"-b", "--bypass-proxy"})
+                    new Option<bool>(new[] {"-b", "--bypass-proxy"})
                     {
                         Description = "If the engine will bypass the proxy",
                         Name = "BypassProxy"
                     },
 
-                    new Option<int>(new [] {"-t", "--timeout"})
+                    new Option<int>(new[] {"-t", "--timeout"})
                     {
                         Description = "Specify max timeout for HttpServer",
                         Name = "Timeout",
@@ -146,7 +156,7 @@ namespace CredentialCat.Console
                         }
                     },
 
-                    new Option<int>(new [] {"-l", "--limit"})
+                    new Option<int>(new[] {"-l", "--limit"})
                     {
                         Description = "Specify max entities to get",
                         Name = "Limit",
@@ -163,25 +173,26 @@ namespace CredentialCat.Console
                         Name = "Export",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ExactlyOne, Name = "file path with extension", Description = "Where the export will be saved"
+                            Arity = ArgumentArity.ExactlyOne, Name = "file path with extension",
+                            Description = "Where the export will be saved"
                         }
                     },
 
                     // Data input options
 
                     // Password and hashes
-                    new Option<string>(new [] {"-p", "--password", "-h", "--hash"})
+                    new Option<string>(new[] {"-p", "--password", "-h", "--hash"})
                     {
                         Description = "Query to this specific password or hash",
                         Name = "Password",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ExactlyOne, Name = "query value", 
+                            Arity = ArgumentArity.ExactlyOne, Name = "query value",
                             Description = "Password or hash"
                         }
                     },
 
-                    new Option<string>(new [] {"-pL", "--password-list", "-hL", "--hash-list"})
+                    new Option<string>(new[] {"-pL", "--password-list", "-hL", "--hash-list"})
                     {
                         Description = "Query to passwords and/or hashes on given wordlist",
                         Name = "PasswordList",
@@ -193,7 +204,7 @@ namespace CredentialCat.Console
                     },
 
                     // User(name) and email addresses
-                    new Option<string>(new [] {"-u", "--user", "-e", "--email"})
+                    new Option<string>(new[] {"-u", "--user", "-e", "--email"})
                     {
                         Description = "Query to this specific user(name) or email address",
                         Name = "User",
@@ -204,7 +215,7 @@ namespace CredentialCat.Console
                         }
                     },
 
-                    new Option<string>(new [] {"-uL", "--user-list", "-eL", "--email-list"})
+                    new Option<string>(new[] {"-uL", "--user-list", "-eL", "--email-list"})
                     {
                         Description = "Query to user(s) and/or email address(es) on given wordlist",
                         Name = "UserList",
@@ -216,7 +227,7 @@ namespace CredentialCat.Console
                     },
 
                     // Leak origin
-                    new Option<string>(new [] {"-o", "--origin"})
+                    new Option<string>(new[] {"-o", "--origin"})
                     {
                         Description = "Query to origin",
                         Name = "Origin",
@@ -242,6 +253,12 @@ namespace CredentialCat.Console
                         WriteLine("[+] See `search --help` for more information");
                         Environment.Exit(1);
                     }
+
+                    var engine = GetEngine();
+
+                    // var exceptionTest = await engine.SearchByPasswordOrHash("asd", options.IgnoreCache, options.IgnoreUpdate,
+                    //     options.ForceUpdate, options.CaseSensitive, options.Timeout, options.Limit,
+                    //     options.BypassProxy);
                 });
 
                 return searchCommand;
@@ -257,9 +274,10 @@ namespace CredentialCat.Console
                         Name = "flush",
                     },
 
-                    new Option<string>(new [] {"-q", "--query"})
+                    new Option<string>(new[] {"-q", "--query"})
                     {
-                        Description = "Perform a SQlite raw query inside cache database (Dangerous, you can have SQLi here!)",
+                        Description =
+                            "Perform a SQlite raw query inside cache database (Dangerous, you can have SQLi here!)",
                         Name = "query",
                         Argument = new Argument<string>
                         {
@@ -378,7 +396,7 @@ namespace CredentialCat.Console
                         Enum.GetNames(typeof(SourceEnum))
                             .Select(e =>
                             {
-                                if ((SourceEnum)Enum.Parse(typeof(SourceEnum), e) == configuration.DefaultSource)
+                                if ((SourceEnum) Enum.Parse(typeof(SourceEnum), e) == configuration.DefaultSource)
                                 {
                                     e += " (current source)";
                                 }
@@ -413,7 +431,8 @@ namespace CredentialCat.Console
                         Name = "newProxy",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ExactlyOne, Name = "IP or address and port", Description = "Proxy on format ADDR:PORT"
+                            Arity = ArgumentArity.ExactlyOne, Name = "IP or address and port",
+                            Description = "Proxy on format ADDR:PORT"
                         }
                     },
 
@@ -433,7 +452,8 @@ namespace CredentialCat.Console
                         Name = "importProxyList",
                         Argument = new Argument<string>
                         {
-                            Arity = ArgumentArity.ExactlyOne, Name = "wordlist path", Description = "File with various proxies"
+                            Arity = ArgumentArity.ExactlyOne, Name = "wordlist path",
+                            Description = "File with various proxies"
                         }
                     },
 
@@ -591,7 +611,8 @@ namespace CredentialCat.Console
                                         Port = port
                                     };
 
-                                    if (!configuration.Proxies.Any(p => p.Address == proxy.Address && p.Port == proxy.Port))
+                                    if (!configuration.Proxies.Any(p =>
+                                        p.Address == proxy.Address && p.Port == proxy.Port))
                                     {
                                         configuration.Proxies.Add(proxy);
 
@@ -619,7 +640,7 @@ namespace CredentialCat.Console
 
             static Option ApplicationEnvironment()
             {
-                var statementOption = new Option(new[] { "-e", "--env" })
+                var statementOption = new Option(new[] {"-e", "--env"})
                 {
                     Description = "Show application environment variables"
                 };
@@ -683,7 +704,8 @@ namespace CredentialCat.Console
 
             #endregion
 
-            commands.Description = "credential-cat help you to enumerate leaked credentials on several sources around the dark web (also in surface).";
+            commands.Description =
+                "credential-cat help you to enumerate leaked credentials on several sources around the dark web (also in surface).";
             return await commands.InvokeAsync(args);
         }
     }
