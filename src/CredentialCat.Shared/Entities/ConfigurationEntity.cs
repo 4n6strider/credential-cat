@@ -13,14 +13,7 @@ namespace CredentialCat.Shared.Entities
         /// List of Tor HTTP proxies addresses
         /// </summary>
         /// <para>Default proxy entity is 127.0.0.1:8118</para>
-        public ICollection<ProxyEntity> Proxies { get; set; } = new List<ProxyEntity>(new List<ProxyEntity>
-        {
-            new ProxyEntity
-            {
-                Address = "127.0.0.1",
-                Port = 8118
-            }
-        });
+        public ICollection<ProxyEntity> Proxies { get; set; }
 
         /// <summary>
         /// Set if the application ignore the local cache

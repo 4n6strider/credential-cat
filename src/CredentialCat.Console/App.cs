@@ -307,6 +307,13 @@ namespace CredentialCat.Console
                 return sourceCommand;
             }
 
+            Command Proxy()
+            {
+                var proxyCommand = new Command("proxy", "Create, list, import and export proxies");
+
+                return proxyCommand;
+            }
+
             #endregion
 
             #region Application options
@@ -331,7 +338,8 @@ namespace CredentialCat.Console
                 // Commands
                 Source(),
                 Search(),
-                Cache()
+                Cache(),
+                Proxy()
             };
 
             commands.Handler = CommandHandler.Create<bool, bool>((env, source) =>
@@ -347,6 +355,8 @@ namespace CredentialCat.Console
                         : $" > CREDENTIAL_CAT_HOME: {envHome}");
                 }
             });
+
+            #region Application banner
 
             var banner = Environment.NewLine;
             banner += @"               /\____/\    __";
@@ -371,6 +381,8 @@ namespace CredentialCat.Console
             banner += Environment.NewLine;
 
             WriteLine(banner);
+
+            #endregion
 
             commands.Description = "credential-cat help you to enumerate leaked credentials on several sources around the dark web (also in surface).";
             return await commands.InvokeAsync(args);
