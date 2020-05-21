@@ -12,6 +12,7 @@ namespace CredentialCat.Console.Entities
     {
         private string _passwordList;
         private string _userList;
+        private string _export;
 
         /// <summary>
         /// If the query will be ignore the cache database
@@ -51,7 +52,25 @@ namespace CredentialCat.Console.Entities
         /// <summary>
         /// Path with the extension of the file to be exported
         /// </summary>
-        public string Export { get; set; }
+        public string Export
+        {
+            get => _export;
+            set
+            {
+                if (!value.EndsWith(".json", StringComparison.InvariantCulture) ||
+                    !value.EndsWith(".json", StringComparison.InvariantCulture))
+                {
+                    WriteLine($"[!] Invalid export file format ({Path.GetExtension(value)})! Only CSV and JSON are supported!");
+                    Environment.Exit(1);
+                }
+
+                if (File.Exists(value))
+                {
+                    WriteLine($"[!] Export file {value} already exist!");
+                    Environment.Exit(1);
+                }
+            }
+        }
 
         /// <summary>
         /// Password or hash to be searched
