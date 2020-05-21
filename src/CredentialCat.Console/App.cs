@@ -348,6 +348,30 @@ namespace CredentialCat.Console
                 }
             });
 
+            var banner = Environment.NewLine;
+            banner += @"               /\____/\    __";
+            banner += Environment.NewLine;
+            banner += "             .'  \"\"\"\"  `,-'  `--.__";
+            banner += Environment.NewLine;
+            banner += "        __,- :   -  -  ;  \" ::     `-. -.__";
+            banner += Environment.NewLine;
+            banner += "     ,-sssss `._  `' _,'\"     ,'~~~::`.sssss-.";
+            banner += Environment.NewLine;
+            banner += @"    |ssssss ,' ,_`--'_    __,' ::  `  `.ssssss|";
+            banner += Environment.NewLine;
+            banner += @"   |sssssss `-._____~ `,,'_______,---_;; ssssss|";
+            banner += Environment.NewLine;
+            banner += @"    |ssssssssss     `--'~{__   ____   ,'ssssss|";
+            banner += Environment.NewLine;
+            banner += @"     `-ssssssssssssssssss ~~~~~~~~~~~~ ssss.-'";
+            banner += Environment.NewLine;
+            banner += @"          `---.sssssssssssssssssssss.---'";
+            banner += Environment.NewLine;
+            banner += "         credential-cat your purrrfect tool!";
+            banner += Environment.NewLine;
+
+            WriteLine(banner);
+
             commands.Description = "credential-cat help you to enumerate leaked credentials on several sources around the dark web (also in surface).";
             return await commands.InvokeAsync(args);
         }
