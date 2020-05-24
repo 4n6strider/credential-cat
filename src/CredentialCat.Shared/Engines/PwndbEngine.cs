@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web;
-using System.Data;
+using System.Net;
 using System.Linq;
 using System.Text;
 using System.Net.Http;
@@ -8,6 +8,8 @@ using System.Net.Mail;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+
+using static System.Console;
 
 using CredentialCat.Shared.Enums;
 using CredentialCat.Shared.Entities;
@@ -22,25 +24,39 @@ namespace CredentialCat.Shared.Engines
     public class PwndbEngine : BaseEngine, IEngine
     {
         private readonly HttpClient _httpClient;
+        private readonly HttpClientHandler _clientHandler;
 
-        public PwndbEngine(DatabaseContext databaseContext, ConfigurationEntity configuration) : base(databaseContext, configuration)
+        public PwndbEngine(DatabaseContext databaseContext, ConfigurationEntity configuration) : base(databaseContext,
+            configuration)
         {
-            _httpClient = new HttpClient(new HttpClientHandler
-            {
-                AllowAutoRedirect = false,
-                UseCookies = false
-            });
+            _clientHandler = new HttpClientHandler();
+            _httpClient = new HttpClient(_clientHandler);
         }
 
-        public async Task<IQueryable<CacheEntity>> SearchByUserOrEmail(string value, bool ignoreCache, bool ignoreUpdate, bool forceUpdate, bool caseSensitive,
+        public async Task<IQueryable<CacheEntity>> SearchByUserOrEmail(string value, bool ignoreCache,
+            bool ignoreUpdate, bool forceUpdate, bool caseSensitive,
             int timeout, int limit, bool bypassProxy)
         {
             HttpResponseMessage response;
             string content;
 
-            if (!IsEmailAddress(value ?? throw new NoNullAllowedException(nameof(value))))
+            SetupProxy(bypassProxy);
+
+            if (!IsEmailAddress(value ?? throw new ArgumentNullException(nameof(value))))
             {
-                response = await _httpClient.SendAsync(GetSkeletonRequestMessage($"luser={HttpUtility.UrlEncode(value)}&domain=&luseropr=0&domainopr=0&submitform=em"));
+                response = await _httpClient.SendAsync(GetSkeletonRequestMessage(
+                    $"luser={HttpUtility.UrlEncode(value)}&domain=&luseropr=0&domainopr=0&submitform=em"));
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    WriteLine(
+                        "[!] A problem occurred doing the request to Pwndb website, check if your proxy is up and running, and is a HTTP Tor one!");
+                    WriteLine("[+] Also can be a issue with Pwndb, open a issue in github.com/BizarreNULL/credential-cat");
+                    WriteLine($"[+] Error: {response.StatusCode}");
+
+                    Environment.Exit(1);
+                }
+
                 content = await response.Content.ReadAsStringAsync();
 
                 return null;
@@ -48,25 +64,54 @@ namespace CredentialCat.Shared.Engines
 
             var emailAddress = new MailAddress(value);
 
-            response = await _httpClient.SendAsync(GetSkeletonRequestMessage($"luser={HttpUtility.UrlEncode(emailAddress.User)}&domain={HttpUtility.UrlEncode(emailAddress.Host)}&luseropr=0&domainopr=0&submitform=em"));
-            content = await response.Content.ReadAsStringAsync();
+            try
+            {
+                response = await _httpClient.SendAsync(GetSkeletonRequestMessage($"luser={HttpUtility.UrlEncode(emailAddress.User)}&domain={HttpUtility.UrlEncode(emailAddress.Host)}&luseropr=0&domainopr=0&submitform=em"));
 
-            return null;
+                if (!response.IsSuccessStatusCode)
+                {
+                    WriteLine(
+                        "[!] A problem occurred doing the request to Pwndb website, check if your proxy is up and running, and is a HTTP Tor one!");
+                    WriteLine("[+] Also can be a issue with Pwndb, open a issue in github.com/BizarreNULL/credential-cat");
+                    WriteLine($"[+] Error: {response.StatusCode}");
+
+                    Environment.Exit(1);
+                }
+
+                content = await response.Content.ReadAsStringAsync();
+
+                WriteLine(content);
+
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                WriteLine(
+                    "[!] A problem occurred doing the request to Pwndb website, check if your proxy is up and running, and is a HTTP Tor one!");
+                WriteLine("[+] Also can be a issue with Pwndb, open a issue in github.com/BizarreNULL/credential-cat");
+                WriteLine($"[+] Error: {e}");
+
+                return null;
+            }
         }
 
-        public Task<IQueryable<CacheEntity>> SearchByUserOrEmailWithWordlist(string wordListPath, bool ignoreCache, bool ignoreUpdate, bool forceUpdate,
+        public Task<IQueryable<CacheEntity>> SearchByUserOrEmailWithWordlist(string wordListPath, bool ignoreCache,
+            bool ignoreUpdate, bool forceUpdate,
             bool caseSensitive, int timeout, int limit, bool bypassProxy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IQueryable<CacheEntity>> SearchByPasswordOrHash(string value, bool ignoreCache, bool ignoreUpdate, bool forceUpdate, bool caseSensitive,
+        public Task<IQueryable<CacheEntity>> SearchByPasswordOrHash(string value, bool ignoreCache, bool ignoreUpdate,
+            bool forceUpdate, bool caseSensitive,
             int timeout, int limit, bool bypassProxy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IQueryable<CacheEntity>> SearchByPasswordOrHashWithWordList(string wordListPath, bool ignoreCache, bool ignoreUpdate, bool forceUpdate,
+        public Task<IQueryable<CacheEntity>> SearchByPasswordOrHashWithWordList(string wordListPath, bool ignoreCache,
+            bool ignoreUpdate, bool forceUpdate,
             bool caseSensitive, int timeout, int limit, bool bypassProxy)
         {
             throw new NotImplementedException();
@@ -79,12 +124,14 @@ namespace CredentialCat.Shared.Engines
             throw new NotImplementedException();
         }
 
-        private HttpRequestMessage GetSkeletonRequestMessage(string content) => new HttpRequestMessage(HttpMethod.Post, new Uri("http://pwndb2am4tzkvold.onion/"))
-        {
-            Content = new StringContent(content ?? throw new ArgumentNullException(nameof(content)), Encoding.UTF8, "application/x-www-form-urlencoded")
-        };
+        private static HttpRequestMessage GetSkeletonRequestMessage(string content) =>
+            new HttpRequestMessage(HttpMethod.Post, new Uri("http://pwndb2am4tzkvold.onion/"))
+            {
+                Content = new StringContent(content ?? throw new ArgumentNullException(nameof(content)), Encoding.UTF8,
+                    "application/x-www-form-urlencoded")
+            };
 
-        public static bool IsEmailAddress(string email)
+        private static bool IsEmailAddress(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 return false;
@@ -123,6 +170,16 @@ namespace CredentialCat.Shared.Engines
             {
                 return false;
             }
+        }
+
+        private void SetupProxy(bool bypass)
+        {
+            if (bypass) return;
+            var proxyEntity = Configuration.Proxies.First(p => p.Id == Configuration.DefaultProxyId);
+            var proxy = new WebProxy(proxyEntity.Address, proxyEntity.Port);
+
+            _clientHandler.UseProxy = true;
+            _clientHandler.Proxy = proxy;
         }
 
         #endregion

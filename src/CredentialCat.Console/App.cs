@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Reflection;
 using System.CommandLine;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.CommandLine.Invocation;
-using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 
 using static System.Console;
@@ -89,20 +89,20 @@ namespace CredentialCat.Console
                 }
 
                 return engineType.Assembly.CreateInstance(engineType.FullName, false, BindingFlags.CreateInstance,
-                    null, new[] {context}, CultureInfo.InvariantCulture, null) as IEngine;
+                    null, new object[] {context, configuration}, CultureInfo.InvariantCulture, null) as IEngine;
             }
 
             #endregion
 
             #region Interruption validation
 
-            CancelKeyPress += async (sender, args) =>
+            CancelKeyPress += async (sender, consoleCancelEventArgs) =>
             {
                 WriteLine();
                 WriteLine("[+] Exiting gratefully...");
                 await context.DisposeAsync();
 
-                args.Cancel = false;
+                consoleCancelEventArgs.Cancel = false;
             };
 
             #endregion
@@ -239,7 +239,7 @@ namespace CredentialCat.Console
                     }
                 };
 
-                searchCommand.Handler = CommandHandler.Create<SearchCommandOptions>(options =>
+                searchCommand.Handler = CommandHandler.Create<SearchCommandOptions>(async options =>
                 {
                     if (options.GetType()
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -256,9 +256,9 @@ namespace CredentialCat.Console
 
                     var engine = GetEngine();
 
-                    // var exceptionTest = await engine.SearchByPasswordOrHash("asd", options.IgnoreCache, options.IgnoreUpdate,
-                    //     options.ForceUpdate, options.CaseSensitive, options.Timeout, options.Limit,
-                    //     options.BypassProxy);
+                    _ = await engine.SearchByUserOrEmail(options.User, options.IgnoreCache, options.IgnoreUpdate,
+                        options.ForceUpdate, options.CaseSensitive, options.Timeout, options.Limit,
+                        options.BypassProxy);
                 });
 
                 return searchCommand;
@@ -316,7 +316,6 @@ namespace CredentialCat.Console
                                 else
                                     dump = result.GetString(i);
 
-                                var column = result.GetName(0);
                                 WriteLine($"{result.GetName(i)} : {dump}");
                             }
 
