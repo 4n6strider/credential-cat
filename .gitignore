@@ -443,4 +443,9 @@ healthchecksdb
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
 
+# credential-cat sensitive information
+
+# Visual Studio launch settings, can have an email address and/or other PII information to debug proposes
+launchSettings.json
+
 # End of https://www.gitignore.io/api/rider,dotnetcore,visualstudio,visualstudiocode
