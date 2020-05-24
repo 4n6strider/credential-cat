@@ -12,6 +12,9 @@
     <img alt="WTFPL License" src="https://img.shields.io/github/license/BizarreNULL/credential-cat" />
   </a>
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/BizarreNULL/credential-cat">
+  <a href="https://github.com/BizarreNULL/credential-cat/actions">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/BizarreNULL/credential-cat/Build">
+  </a>
 </p>
 
 
