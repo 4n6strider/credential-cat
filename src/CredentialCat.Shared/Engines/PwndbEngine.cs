@@ -154,7 +154,8 @@ namespace CredentialCat.Shared.Engines
                         Domain = e.First(s => s.StartsWith("[domain]")).Replace("[domain] => ", string.Empty),
                         SourceReferenceId = e.First(s => s.StartsWith("[id]")).Replace("[id] => ", string.Empty),
                         User = e.First(s => s.StartsWith("[luser]")).Replace("[luser] => ", string.Empty),
-                        Secret = e.First(s => s.StartsWith("[password]")).Replace("[password] => ", string.Empty)
+                        Secret = e.First(s => s.StartsWith("[password]")).Replace("[password] => ", string.Empty),
+                        SecretType = SecretTypeEnum.Mixed
                     };
                 });
 

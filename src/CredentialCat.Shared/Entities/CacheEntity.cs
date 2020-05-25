@@ -12,7 +12,7 @@ namespace CredentialCat.Shared.Entities
         [Key] public string Id { get; set; }
         [Required] public SourceEnum Source { get; set; }
         [Required] public string User { get; set; }
-        [Required] public bool IsSecretHashed { get; set; }
+        [Required] public SecretTypeEnum SecretType { get; set; }
         public string SourceReferenceId { get; set; }
         public string Secret { get; set; }
         public string Domain { get; set; }
