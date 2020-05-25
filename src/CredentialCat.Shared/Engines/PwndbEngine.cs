@@ -102,6 +102,18 @@ namespace CredentialCat.Shared.Engines
             }
         }
 
+        public Task<IQueryable<CacheEntity>> SearchByDomain(string value, bool ignoreCache, bool ignoreUpdate, bool forceUpdate, bool caseSensitive,
+            int timeout, int limit, bool bypassProxy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IQueryable<CacheEntity>> SearchByDomainWordlist(string wordListPath, bool ignoreCache, bool ignoreUpdate, bool forceUpdate,
+            bool caseSensitive, int timeout, int limit, bool bypassProxy)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IQueryable<CacheEntity>> SearchByUserOrEmailWithWordlist(string wordListPath, bool ignoreCache,
             bool ignoreUpdate, bool forceUpdate,
             bool caseSensitive, int timeout, int limit, bool bypassProxy)
