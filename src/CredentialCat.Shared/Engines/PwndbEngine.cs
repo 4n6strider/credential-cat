@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Mail;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using static System.Console;
@@ -59,6 +60,11 @@ namespace CredentialCat.Shared.Engines
 
                 content = await response.Content.ReadAsStringAsync();
 
+                var entities = PwndbResponseParser(content)
+                    .Where(e => e.Secret != "12cC7BdkBbru6JGsWvTx4PPM5LjLX8g49X");
+
+
+
                 return null;
             }
 
@@ -77,10 +83,10 @@ namespace CredentialCat.Shared.Engines
 
                     Environment.Exit(1);
                 }
-
+                 
                 content = await response.Content.ReadAsStringAsync();
 
-                WriteLine(content);
+                var entities = PwndbResponseParser(content);
 
                 return null;
             }
@@ -119,10 +125,26 @@ namespace CredentialCat.Shared.Engines
 
         #region Helpers
 
-        private async Task<CacheEntity> PwndbResponseParser(string content)
-        {
-            throw new NotImplementedException();
-        }
+        private static IEnumerable<CacheEntity> PwndbResponseParser(string content) =>
+            content.Split("Array")
+                .Where(d => d.Contains("=>"))
+                .SelectMany(d => d.Split("\n"))
+                .Where(d => d.Contains("=>"))
+                .Select((x, i) => new {Index = i, Value = x})
+                .GroupBy(x => x.Index / 4)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .Select(e =>
+                {
+                    e = e.Select(s => s.Trim()).ToList();
+
+                    return new CacheEntity
+                    {
+                        Domain = e.First(s => s.StartsWith("[domain]")).Replace("[domain] => ", string.Empty),
+                        SourceReferenceId = e.First(s => s.StartsWith("[id]")).Replace("[id] => ", string.Empty),
+                        User = e.First(s => s.StartsWith("[luser]")).Replace("[luser] => ", string.Empty),
+                        Secret = e.First(s => s.StartsWith("[password]")).Replace("[password] => ", string.Empty)
+                    };
+                });
 
         private static HttpRequestMessage GetSkeletonRequestMessage(string content) =>
             new HttpRequestMessage(HttpMethod.Post, new Uri("http://pwndb2am4tzkvold.onion/"))
@@ -185,3 +207,4 @@ namespace CredentialCat.Shared.Engines
         #endregion
     }
 }
+ 
