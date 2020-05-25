@@ -122,6 +122,16 @@ namespace CredentialCat.Console.Entities
         }
 
         /// <summary>
+        /// Search by given domain
+        /// </summary>
+        public string Domain { get; set; }
+
+        /// <summary>
+        /// Search domain by given wordlist
+        /// </summary>
+        public string DomainList { get; set; }
+
+        /// <summary>
         /// If present, search on cache database with specific origin
         /// </summary>
         public string Origin { get; set; }
